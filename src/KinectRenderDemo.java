@@ -1,18 +1,21 @@
-
 import processing.core.PApplet;
 import processing.core.PVector;
+import java.io.IOException;
 import gifAnimation.*;
 
 /**
  * @author eitan
- *
+ * 
  */
+
 public class KinectRenderDemo extends PApplet {
 
 	KinectBodyDataProvider kinectReader;
 
 	public void settings() {
-		size(500,500);//, P2D);
+		size(1000,1000);//, P2D);
+		//fullScreen(P2D); //native resolution is 1920x1080
+		
 	}
 
 	public void setup(){
@@ -27,7 +30,13 @@ public class KinectRenderDemo extends PApplet {
 		}
 		 */
 		
-		kinectReader = new KinectBodyDataProvider(8008);
+		try {
+			kinectReader = new KinectBodyDataProvider("test.kinect", 5);
+		} catch (IOException e) {
+			System.out.println("Unable to creat e kinect producer");
+		}
+
+		//kinectReader = new KinectBodyDataProvider(8008);
 		kinectReader.start();
 
 	}
