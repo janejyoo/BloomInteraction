@@ -14,7 +14,6 @@ import gifAnimation.*;
 public class KinectRenderDemo extends PApplet {
 
 	KinectBodyDataProvider kinectReader;
-	PImage[] flowerFrames;
 	
 	Gif flower1; 
 	Gif flower2; 
@@ -32,10 +31,10 @@ public class KinectRenderDemo extends PApplet {
 //<<<<<<< HEAD
 		//size(600,600);//, P2D);
 //=======
-		size(600,600);//, P2D);
+		size(800,800, FX2D);//, P2D);
 //>>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
 		//fullScreen(P2D); //native resolution is 1920x1080
-		fullScreen();
+		//fullScreen();
 		
 	}
 
@@ -100,7 +99,7 @@ public class KinectRenderDemo extends PApplet {
 		translate(1,-1);
 		noStroke();
 
-		background(200,200,200);
+		background(0);
 
 		// leave trails instead of clearing background \ 
 		//noStroke();
@@ -163,7 +162,7 @@ public class KinectRenderDemo extends PApplet {
 		if(vec != null) {
 
 			if( flower == 1 ){
-				image(flower1, vec.x, vec.y, .3f, .3f);
+				image(flower1, vec.x, vec.y, .2f, .2f);
 			}
 			else if( flower == 2 ){
 				image(flower2, vec.x, vec.y, .3f, .3f);
@@ -186,7 +185,7 @@ public class KinectRenderDemo extends PApplet {
 			else if( flower == 8 ){
 				image(flower8, vec.x, vec.y, .3f, .3f);
 			}
-			//image(gif, vec.x, vec.y, .3f, .3f);
+			
 			//drawFlowers(vec, .07f);
 			//ellipse(vec.x, vec.y, .1f,.1f);
 		}
