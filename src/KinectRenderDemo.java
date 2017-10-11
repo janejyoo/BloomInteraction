@@ -30,7 +30,7 @@ public class KinectRenderDemo extends PApplet {
 		/*
 		 * use this code to run your PApplet from data recorded by UPDRecorder 
 		 */
-<<<<<<< HEAD
+//<<<<<<< HEAD
 //		try {
 //			kinectReader = new KinectBodyDataProvider("recordedData.kinect",6);
 //		} catch (IOException e) {
@@ -38,10 +38,9 @@ public class KinectRenderDemo extends PApplet {
 //		}
 		 
 //		
-=======
 
 		
->>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
+//>>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
 		try {
 			kinectReader = new KinectBodyDataProvider("test.kinect", 5);
 		} catch (IOException e) {
