@@ -1,4 +1,5 @@
 import processing.core.PApplet;
+import processing.core.PImage;
 import processing.core.PVector;
 import java.io.IOException;
 import gifAnimation.*;
@@ -11,14 +12,20 @@ import gifAnimation.*;
 public class KinectRenderDemo extends PApplet {
 
 	KinectBodyDataProvider kinectReader;
+	PImage[] flowerFrames;
+	Gif myAnimation;
+
+	boolean pause = false;
 
 	public void settings() {
-		size(1000,1000);//, P2D);
+		size(600,600);//, P2D);
 		//fullScreen(P2D); //native resolution is 1920x1080
 		
 	}
 
 	public void setup(){
+
+		  frameRate(100);
 
 		/*
 		 * use this code to run your PApplet from data recorded by UPDRecorder 
@@ -29,6 +36,7 @@ public class KinectRenderDemo extends PApplet {
 			System.out.println("Unable to creat e kinect producer");
 		}
 		 */
+
 		
 		try {
 			kinectReader = new KinectBodyDataProvider("test.kinect", 5);
@@ -38,7 +46,11 @@ public class KinectRenderDemo extends PApplet {
 
 		//kinectReader = new KinectBodyDataProvider(8008);
 		kinectReader.start();
-
+		
+		flowerFrames = Gif.getPImages(this, "flowers/f3.gif");
+		myAnimation = new Gif(this, "flowers/f3.gif");
+		myAnimation.play();
+		
 	}
 	public void draw(){
 		//makes the window 2x2
@@ -47,8 +59,6 @@ public class KinectRenderDemo extends PApplet {
 		//make positive y up and center of window 0,0
 		translate(1,-1);
 		noStroke();
-
-
 
 		background(200,200,200);
 
@@ -69,6 +79,8 @@ public class KinectRenderDemo extends PApplet {
 			PVector footRight = person.getJoint(Body.FOOT_RIGHT);
 			PVector handLeft = person.getJoint(Body.HAND_LEFT);
 			PVector handRight = person.getJoint(Body.HAND_RIGHT);
+			
+			System.out.println("head" + head);
 
 
 			fill(255,255,255);
@@ -113,16 +125,37 @@ public class KinectRenderDemo extends PApplet {
 		if(vec != null) {
 			ellipse(vec.x, vec.y, .1f,.1f);
 		}
-
+		
 	}
 	
 	public void drawToPurple(PVector vec){
 		if(vec != null){
 
 			fill(153,50,204);
-			ellipse(vec.x, vec.y, .1f, .1f);
+			//ellipse(vec.x, vec.y, .1f, .1f);
+
+			image(myAnimation, vec.x, vec.y);
 		}
 	}
+	
+	public void mousePressed() {
+		  //nonLoopingGif.play();
+		}
+
+		public void keyPressed() {
+		  if (key == ' ') {
+		    if (pause) {
+		      //nonLoopingGif.play();
+		      //loopingGif.play();
+		      pause = false;
+		    } 
+		    else {
+		      //nonLoopingGif.pause();
+		      //loopingGif.pause();
+		      pause = true;
+		    }
+		  }
+		}
 
 
 	public static void main(String[] args) {
