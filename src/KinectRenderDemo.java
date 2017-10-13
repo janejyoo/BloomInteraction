@@ -22,8 +22,6 @@ public class KinectRenderDemo extends PApplet {
 	Gif flower5; 
 	Gif flower6;
 	Gif flower7; 
-	Gif flower8; 
-	Gif flower9;
 	
 	boolean pause = false;
 
@@ -87,8 +85,6 @@ public class KinectRenderDemo extends PApplet {
 		flower6.loop();
 		flower7 = new Gif(this, "flowers/f7.gif");
 		flower7.loop();
-		flower8 = new Gif(this, "flowers/f8.gif");
-		flower8.loop();
 	}
 	
 	public void draw(){
@@ -182,9 +178,7 @@ public class KinectRenderDemo extends PApplet {
 			else if( flower == 7 ){
 				image(flower7, vec.x, vec.y, .3f, .3f);
 			}
-			else if( flower == 8 ){
-				image(flower8, vec.x, vec.y, .3f, .3f);
-			}
+
 			
 			//drawFlowers(vec, .07f);
 			//ellipse(vec.x, vec.y, .1f,.1f);
