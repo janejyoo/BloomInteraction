@@ -1,3 +1,5 @@
+/.metadata/
+/.DS_Store
 /Body.class
 /KinectBodyData.class
 /KinectBodyDataProvider.class
@@ -9,8 +11,4 @@
 /UDPReceiver.class
 /UDPRecorder.class
 /UsingProcessing.class
-/gifTest.class
-/gifTest2.class
-/jane_gif_test.class
 /bloom_KRD.class
-/.DS_Store

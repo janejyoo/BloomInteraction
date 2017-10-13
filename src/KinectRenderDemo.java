@@ -1,7 +1,9 @@
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
+
 import java.io.IOException;
+
 import gifAnimation.*;
 
 /**
@@ -12,15 +14,32 @@ import gifAnimation.*;
 public class KinectRenderDemo extends PApplet {
 
 	KinectBodyDataProvider kinectReader;
-	PImage[] flowerFrames;
-	Gif myAnimation;
-
+	
+	Gif flower1; 
+	Gif flower2; 
+	Gif flower3;
+	Gif flower4; 
+	Gif flower5; 
+	Gif flower6;
+	Gif flower7; 
+	
 	boolean pause = false;
 
 	public void settings() {
+<<<<<<< HEAD
 		//size(600,600);
 		//fullScreen(P2D); //native resolution is 1920x1080
 		fullScreen();
+=======
+//<<<<<<< HEAD
+		//size(600,600);//, P2D);
+//=======
+		size(800,800, FX2D);//, P2D);
+//>>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
+		//fullScreen(P2D); //native resolution is 1920x1080
+		//fullScreen();
+		
+>>>>>>> b849ba3dc23a5157c8092c1a1bed2a6faba0f762
 	}
 	//settings: fullScreen();
 
@@ -46,11 +65,27 @@ public class KinectRenderDemo extends PApplet {
 		//kinectReader = new KinectBodyDataProvider(8008);
 		kinectReader.start();
 		
-		flowerFrames = Gif.getPImages(this, "flowers/f3.gif");
-		myAnimation = new Gif(this, "flowers/f3.gif");
-		myAnimation.play();
-		
+		// set up gifs
+		setupGifs();
 	}
+	
+	public void setupGifs(){
+		flower1 = new Gif(this, "flowers/f1.gif");
+		flower1.loop();
+		flower2 = new Gif(this, "flowers/f2.gif");
+		flower2.loop();
+		flower3 = new Gif(this, "flowers/f3.gif");
+		flower3.loop();
+		flower4 = new Gif(this, "flowers/f4.gif");
+		flower4.loop();
+		flower5 = new Gif(this, "flowers/f5.gif");
+		flower5.loop();
+		flower6 = new Gif(this, "flowers/f6.gif");
+		flower6.loop();
+		flower7 = new Gif(this, "flowers/f7.gif");
+		flower7.loop();
+	}
+	
 	public void draw(){
 		//makes the window 2x2
 		this.scale(width/2.5f, -height/2.5f);
@@ -59,7 +94,7 @@ public class KinectRenderDemo extends PApplet {
 		translate(1,-1);
 		noStroke();
 
-		background(200,200,200);
+		background(0);
 
 		// leave trails instead of clearing background \ 
 		//noStroke();
@@ -84,15 +119,16 @@ public class KinectRenderDemo extends PApplet {
 
 			fill(255,255,255);
 			noStroke();
-			drawToPurple(head);
-			drawIfValid(spine);
-			drawIfValid(spineBase);
-			drawIfValid(shoulderLeft);
-			drawIfValid(shoulderRight);
-			drawIfValid(footLeft);
-			drawIfValid(footRight);
-			drawIfValid(handLeft);
-			drawIfValid(handRight);
+			drawIfValid(head, 1);
+			drawIfValid(spine, 2);
+			drawIfValid(spineBase, 3);
+			drawIfValid(shoulderLeft, 4);
+			drawIfValid(shoulderRight, 5);
+			drawIfValid(footLeft, 6);
+			drawIfValid(footRight, 7);
+			drawIfValid(handLeft, 8);
+			drawIfValid(handRight, 1);
+
 
 			if( (shoulderLeft != null) &&
 					(shoulderRight != null) &&
@@ -107,10 +143,7 @@ public class KinectRenderDemo extends PApplet {
 						shoulderRight.x, shoulderRight.y,
 						handRight.x, handRight.y
 						);
-
-
 			}
-
 		}
 	}
 
@@ -120,33 +153,48 @@ public class KinectRenderDemo extends PApplet {
 	 * will return null if the joint isn't tracked. 
 	 * @param vec
 	 */
-	public void drawIfValid(PVector vec) {
+	public void drawIfValid(PVector vec, int flower) {
 		if(vec != null) {
-			ellipse(vec.x, vec.y, .1f,.1f);
-		}
-		
-	}
-	
-	public void drawToPurple(PVector vec){
-		if(vec != null){
 
-			fill(153,50,204);
-			//ellipse(vec.x, vec.y, .1f, .1f);
+			if( flower == 1 ){
+				image(flower1, vec.x, vec.y, .2f, .2f);
+			}
+			else if( flower == 2 ){
+				image(flower2, vec.x, vec.y, .3f, .3f);
+			}
+			else if( flower == 3 ){
+				image(flower3, vec.x, vec.y, .3f, .3f);
+			}
+			else if( flower == 4 ){
+				image(flower4, vec.x, vec.y, .3f, .3f);
+			}
+			else if( flower == 5 ){
+				image(flower5, vec.x, vec.y, .3f, .3f);
+			}
+			else if( flower == 6 ){
+				image(flower6, vec.x, vec.y, .3f, .3f);
+			}
+			else if( flower == 7 ){
+				image(flower7, vec.x, vec.y, .3f, .3f);
+			}
 
-			image(myAnimation, vec.x, vec.y);
+			
+			//drawFlowers(vec, .07f);
+			//ellipse(vec.x, vec.y, .1f,.1f);
 		}
+
 	}
 	
 	public void mousePressed() {
 		  //nonLoopingGif.play();
 		}
 
-		public void keyPressed() {
-		  if (key == ' ') {
-		    if (pause) {
-		      //nonLoopingGif.play();
-		      //loopingGif.play();
-		      pause = false;
+	public void keyPressed() {
+		if (key == ' ') {
+			if (pause) {
+				//nonLoopingGif.play();
+				//loopingGif.play();
+		        pause = false;
 		    } 
 		    else {
 		      //nonLoopingGif.pause();
