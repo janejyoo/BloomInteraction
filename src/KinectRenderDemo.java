@@ -60,14 +60,15 @@ public class KinectRenderDemo extends PApplet {
 		f5 = Gif.getPImages(this, "flowers/f5.gif");
 		f6 = Gif.getPImages(this, "flowers/f6.gif");
 		f7 = Gif.getPImages(this, "flowers/f7.gif");
-		
-		try{
+
+		  frameRate(100);
+
+		try {
 			kinectReader = new KinectBodyDataProvider("test.kinect", 5);
 		}catch(IOException e){
 			
 		}
-		
-		kinectReader.start();
+			kinectReader.start();		
 	}
 		
 	public void draw(){
