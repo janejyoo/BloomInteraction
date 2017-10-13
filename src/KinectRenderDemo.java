@@ -1,107 +1,88 @@
-import processing.core.PApplet;
-import processing.core.PImage;
-import processing.core.PVector;
-
 import java.io.IOException;
+import java.util.ArrayList;
 
+import processing.core.*;
 import gifAnimation.*;
 
 /**
  * @author eitan
- * 
+ *
  */
-
 public class KinectRenderDemo extends PApplet {
 
 	KinectBodyDataProvider kinectReader;
 	
-	Gif flower1; 
-	Gif flower2; 
-	Gif flower3;
-	Gif flower4; 
-	Gif flower5; 
-	Gif flower6;
-	Gif flower7; 
+	int frame = 0;
+	// Store Flowers
+	ArrayList<PImage[]> flowers;
 	
-	boolean pause = false;
+	PImage[] f1, f2, f3, f4, f5, f6, f7;
 
-	public void settings() {
-//<<<<<<< HEAD
-		//size(600,600);//, P2D);
-//=======
-		size(800,800, FX2D);//, P2D);
-//>>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
-		//fullScreen(P2D); //native resolution is 1920x1080
-		//fullScreen();
+	public static float PROJECTOR_RATIO = 1080f/1920.0f;
+
+	public void createWindow(boolean useP2D, boolean isFullscreen, float windowsScale) {
+		if (useP2D) {
+			if(isFullscreen) {
+				fullScreen(FX2D);  			
+			} else {
+				size((int)(1920 * windowsScale), (int)(1080 * windowsScale), FX2D);
+			}
+		} else {
+			if(isFullscreen) {
+				fullScreen();  			
+			} else {
+				size((int)(1920 * windowsScale), (int)(1080 * windowsScale), FX2D);
+			}
+		}		
+	}
+	
+	// use lower numbers to zoom out (show more of the world)
+	// zoom of 1 means that the window is 2 meters wide and appox 1 meter tall.
+	public void setScale(float zoom) {
+		scale(zoom* width/2.0f, zoom * -width/2.0f);
+		translate(1f/zoom , -PROJECTOR_RATIO/zoom );		
+	}
 		
+	public void settings() {
+		//fullScreen(FX2D);
+		createWindow(true, true, .5f);
+		//size(800,800, FX2D);
 	}
 
 	public void setup(){
-
-		  frameRate(100);
-
-		/*
-		 * use this code to run your PApplet from data recorded by UPDRecorder 
-		 */
-//<<<<<<< HEAD
-//<<<<<<< HEAD
-//		try {
-//			kinectReader = new KinectBodyDataProvider("recordedData.kinect",6);
-//		} catch (IOException e) {
-//			System.out.println("Unable to creat e kinect producer");
-//		}
-		 
-//		
-//=======
-//>>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
-
 		
-//>>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
-		try {
+		setScale(.5f);
+		// get each frame from flower gifs
+		f1 = Gif.getPImages(this, "flowers/f1.gif");
+		f2 = Gif.getPImages(this, "flowers/f2.gif");
+		f3 = Gif.getPImages(this, "flowers/f3.gif");
+		f4 = Gif.getPImages(this, "flowers/f4.gif");
+		f5 = Gif.getPImages(this, "flowers/f5.gif");
+		f6 = Gif.getPImages(this, "flowers/f6.gif");
+		f7 = Gif.getPImages(this, "flowers/f7.gif");
+		
+		try{
 			kinectReader = new KinectBodyDataProvider("test.kinect", 5);
-		} catch (IOException e) {
-			System.out.println("Unable to creat e kinect producer");
+		}catch(IOException e){
+			
 		}
-//
-		//kinectReader = new KinectBodyDataProvider(8008);
-		kinectReader.start();
 		
-		// set up gifs
-		setupGifs();
+		kinectReader.start();
 	}
-	
-	public void setupGifs(){
-		flower1 = new Gif(this, "flowers/f1.gif");
-		flower1.loop();
-		flower2 = new Gif(this, "flowers/f2.gif");
-		flower2.loop();
-		flower3 = new Gif(this, "flowers/f3.gif");
-		flower3.loop();
-		flower4 = new Gif(this, "flowers/f4.gif");
-		flower4.loop();
-		flower5 = new Gif(this, "flowers/f5.gif");
-		flower5.loop();
-		flower6 = new Gif(this, "flowers/f6.gif");
-		flower6.loop();
-		flower7 = new Gif(this, "flowers/f7.gif");
-		flower7.loop();
-	}
-	
+		
 	public void draw(){
 		//makes the window 2x2
-		this.scale(width/2.5f, -height/2.5f);
-
+		this.scale(width/2.3f, -height/2.3f);
+		
 		//make positive y up and center of window 0,0
 		translate(1,-1);
 		noStroke();
 
 		background(0);
-
-		// leave trails instead of clearing background \ 
-		//noStroke();
-		//fill(0,0,0, 10);
-		//rect(-1,-1, 2, 2); //draw transparent rect of the window
-
+		
+		fill(255,0,255);
+		noStroke();
+	
 		KinectBodyData bodyData = kinectReader.getMostRecentData();
 		Body person = bodyData.getPerson(0);
 		if(person != null){
@@ -114,23 +95,20 @@ public class KinectRenderDemo extends PApplet {
 			PVector footRight = person.getJoint(Body.FOOT_RIGHT);
 			PVector handLeft = person.getJoint(Body.HAND_LEFT);
 			PVector handRight = person.getJoint(Body.HAND_RIGHT);
-			
-			System.out.println("head" + head);
 
-
-			fill(255,255,255);
+			fill(191, 0, 173);
 			noStroke();
-			drawIfValid(head, 1);
-			drawIfValid(spine, 2);
-			drawIfValid(spineBase, 3);
-			drawIfValid(shoulderLeft, 4);
-			drawIfValid(shoulderRight, 5);
-			drawIfValid(footLeft, 6);
-			drawIfValid(footRight, 7);
-			drawIfValid(handLeft, 8);
-			drawIfValid(handRight, 1);
+//			drawIfValid(head, 1);
+//			drawIfValid(spine, 2);
+//			drawIfValid(spineBase, 3);
+//			drawIfValid(shoulderLeft, 4);
+//			drawIfValid(shoulderRight, 5);
+//			drawIfValid(footLeft, 6);
+//			drawIfValid(footRight, 7);
+//			drawIfValid(handLeft, 8);
+//			drawIfValid(handRight, 1);
 
-
+			
 			if( (shoulderLeft != null) &&
 					(shoulderRight != null) &&
 					(handLeft != null) &&
@@ -145,66 +123,37 @@ public class KinectRenderDemo extends PApplet {
 						handRight.x, handRight.y
 						);
 			}
-		}
-	}
-
-	/**
-	 * Draws an ellipse in the x,y position of the vector (it ignores z).
-	 * Will do nothing is vec is null.  This is handy because get joint 
-	 * will return null if the joint isn't tracked. 
-	 * @param vec
-	 */
-	public void drawIfValid(PVector vec, int flower) {
-		if(vec != null) {
-
-			if( flower == 1 ){
-				image(flower1, vec.x, vec.y, .2f, .2f);
-			}
-			else if( flower == 2 ){
-				image(flower2, vec.x, vec.y, .3f, .3f);
-			}
-			else if( flower == 3 ){
-				image(flower3, vec.x, vec.y, .3f, .3f);
-			}
-			else if( flower == 4 ){
-				image(flower4, vec.x, vec.y, .3f, .3f);
-			}
-			else if( flower == 5 ){
-				image(flower5, vec.x, vec.y, .3f, .3f);
-			}
-			else if( flower == 6 ){
-				image(flower6, vec.x, vec.y, .3f, .3f);
-			}
-			else if( flower == 7 ){
-				image(flower7, vec.x, vec.y, .3f, .3f);
-			}
-
 			
-			//drawFlowers(vec, .07f);
-			//ellipse(vec.x, vec.y, .1f,.1f);
+			
+			if(head != null){
+				// add flowers
+				drawHead(head);
+				
+				if(frame < f1.length-1){
+					frame++;
+				}
+			}
+			
 		}
 
 	}
 	
-	public void mousePressed() {
-		  //nonLoopingGif.play();
-		}
-
-	public void keyPressed() {
-		if (key == ' ') {
-			if (pause) {
-				//nonLoopingGif.play();
-				//loopingGif.play();
-		        pause = false;
-		    } 
-		    else {
-		      //nonLoopingGif.pause();
-		      //loopingGif.pause();
-		      pause = true;
-		    }
-		  }
-		}
-
+	// add flowers to represent head
+	public void drawHead(PVector vec){
+		
+		image(f1[frame], vec.x+0.03f, vec.y+0.01f, .15f, .15f);
+		image(f2[frame], vec.x+0.02f, vec.y+0.02f, .15f, .15f);
+		image(f3[frame], vec.x-0.1f, vec.y-0.03f, .15f, .15f);
+		image(f4[frame], vec.x-0.1f, vec.y, .15f, .15f);
+		image(f2[frame], vec.x, vec.y, .15f, .15f);
+		image(f3[frame], vec.x, vec.y-0.1f, .15f, .15f);
+		image(f4[frame], vec.x, vec.y-0.2f, .15f, .15f);
+		image(f5[frame], vec.x-0.2f, vec.y, .15f, .15f);
+		image(f6[frame], vec.x-0.1f, vec.y-0.1f, .15f, .15f);
+		image(f7[frame], vec.x, vec.y, .1f, .1f);
+	}
+	
+	
 
 	public static void main(String[] args) {
 		PApplet.main(KinectRenderDemo.class.getName());
