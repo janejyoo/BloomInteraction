@@ -1,9 +1,7 @@
 import processing.core.PApplet;
 import processing.core.PImage;
 import processing.core.PVector;
-
 import java.io.IOException;
-
 import gifAnimation.*;
 
 /**
@@ -26,22 +24,9 @@ public class KinectRenderDemo extends PApplet {
 	boolean pause = false;
 
 	public void settings() {
-<<<<<<< HEAD
-		//size(600,600);
-		//fullScreen(P2D); //native resolution is 1920x1080
 		fullScreen();
-=======
-//<<<<<<< HEAD
-		//size(600,600);//, P2D);
-//=======
-		size(800,800, FX2D);//, P2D);
-//>>>>>>> 2baf48119118167b1c7dcb8ce8878f990aa2e7b4
-		//fullScreen(P2D); //native resolution is 1920x1080
-		//fullScreen();
-		
->>>>>>> b849ba3dc23a5157c8092c1a1bed2a6faba0f762
+
 	}
-	//settings: fullScreen();
 
 	public void setup(){
 
