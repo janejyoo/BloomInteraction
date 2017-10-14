@@ -1,7 +1,9 @@
 
+import processing.core.PApplet;
+import processing.core.PImage;
+import processing.core.PVector;
 import java.io.IOException;
 import java.util.ArrayList;
-
 import processing.core.*;
 import gifAnimation.*;
 
@@ -21,6 +23,7 @@ public class KinectRenderDemo extends PApplet {
 	
 	// each array has the frames of flower gif
 	PImage[] f1, f2, f3, f4, f5, f6, f7;
+
 	
 	// holds flowers
 	ArrayList<PImage[]> flowers;
@@ -30,6 +33,16 @@ public class KinectRenderDemo extends PApplet {
 	
 	public static float PROJECTOR_RATIO = 1080f/1920.0f;
 	
+	boolean pause = false;
+	
+	//hand Right
+	float HRprevY = 0;
+	float HRlastFrame = 0;
+	
+	//handLeft
+	float HLprevY = 0;
+	float HLlastFrame = 0;
+
 	public void createWindow(boolean useP2D, boolean isFullscreen, float windowsScale) {
 		if (useP2D) {
 			if(isFullscreen) {
@@ -118,6 +131,7 @@ public class KinectRenderDemo extends PApplet {
 	
 		KinectBodyData bodyData = kinectReader.getMostRecentData();
 		Body person = bodyData.getPerson(0);
+		
 		if(person != null){
 			PVector head = person.getJoint(Body.HEAD);
 			PVector spine = person.getJoint(Body.SPINE_SHOULDER);
@@ -130,6 +144,11 @@ public class KinectRenderDemo extends PApplet {
 			PVector handRight = person.getJoint(Body.HAND_RIGHT);
 
 			fill(191, 0, 173);
+			
+			System.out.println("diff HR " + getIntensity(handRight, HRprevY, HRlastFrame) );
+			//System.out.println("diff HL " + diff(handLeft, HLprevY, HLlastFrame) );
+
+			fill(255,255,255);
 			noStroke();
 			
 			// draw circles 
@@ -187,9 +206,76 @@ public class KinectRenderDemo extends PApplet {
 					fullBloom = false;
 			}
 		}
-
 	}
 	
+	//velocity and change in y
+	//90% of the old change (change in the last frame) + 10% of the new change (current and last)
+	public float getCurrentChange(float lastframe, float changeinY){
+		
+		float result = (float) ((lastframe*0.8) + (changeinY*0.2));
+		
+		return result;
+	}
+	
+	public boolean diff(PVector currV, float prevY, float lastFrame){
+		
+		boolean goingDown = false;
+		
+		if (currV != null){
+			
+			float diffY = currV.y - prevY ;
+			
+			float currY = getCurrentChange(lastFrame, diffY);
+				
+				//don't change the intensity if there's no change
+				if (currY != 0){
+				
+					if ( currY >= 0.05 ){
+						goingDown = true;
+					}
+					
+					//if the difference is positive, don't change anything
+					else{
+						goingDown = false;
+					}
+				}
+			prevY = currV.y;
+			lastFrame = currY;
+			
+		}
+		
+		return goingDown;
+	}
+	
+	public int getIntensity(PVector p1, float prevY, float lastFrame){
+		
+		boolean curVal = diff(p1, prevY, lastFrame);
+		
+		int intensity = -1;
+		
+		if (curVal){
+			
+			float diff = p1.y - prevY;
+			
+			System.out.println("diff : " + diff);
+			
+			if (0 == diff){
+				 intensity = 0;
+			}
+			else if (diff > 0 && diff < 0.5){
+				 intensity = 1;
+			}
+			else if (diff > 0 && diff < 0.8 ){
+				 intensity = 2;
+			}
+			else{
+				intensity = 3;
+			}
+		}
+		
+		return intensity;
+	}
+
 	public void drawIfValid(PVector vec) {
 		if(vec != null) {
 			ellipse(vec.x, vec.y, .1f,.1f);
