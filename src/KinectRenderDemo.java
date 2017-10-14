@@ -21,7 +21,19 @@ public class KinectRenderDemo extends PApplet {
 	
 	PImage[] f1, f2, f3, f4, f5, f6, f7;
 
+<<<<<<< Updated upstream
 	public static float PROJECTOR_RATIO = 1080f/1920.0f;
+=======
+	boolean pause = false;
+	
+	//hand Right
+	float HRprevY = 0;
+	float HRlastFrame = 0;
+	
+	//handLeft
+	float HLprevY = 0;
+	float HLlastFrame = 0;
+>>>>>>> Stashed changes
 
 	public void createWindow(boolean useP2D, boolean isFullscreen, float windowsScale) {
 		if (useP2D) {
@@ -89,6 +101,7 @@ public class KinectRenderDemo extends PApplet {
 	
 		KinectBodyData bodyData = kinectReader.getMostRecentData();
 		Body person = bodyData.getPerson(0);
+		
 		if(person != null){
 			PVector head = person.getJoint(Body.HEAD);
 			PVector spine = person.getJoint(Body.SPINE_SHOULDER);
@@ -99,8 +112,16 @@ public class KinectRenderDemo extends PApplet {
 			PVector footRight = person.getJoint(Body.FOOT_RIGHT);
 			PVector handLeft = person.getJoint(Body.HAND_LEFT);
 			PVector handRight = person.getJoint(Body.HAND_RIGHT);
+<<<<<<< Updated upstream
 
 			fill(191, 0, 173);
+=======
+			
+			System.out.println("diff HR " + getIntensity(handRight, HRprevY, HRlastFrame) );
+			//System.out.println("diff HL " + diff(handLeft, HLprevY, HLlastFrame) );
+
+			fill(255,255,255);
+>>>>>>> Stashed changes
 			noStroke();
 //			drawIfValid(head, 1);
 //			drawIfValid(spine, 2);
@@ -139,9 +160,82 @@ public class KinectRenderDemo extends PApplet {
 			}
 			
 		}
+<<<<<<< Updated upstream
+=======
+	}
+	
+	//velocity and change in y
+	//90% of the old change (change in the last frame) + 10% of the new change (current and last)
+	public float getCurrentChange(float lastframe, float changeinY){
+		
+		float result = (float) ((lastframe*0.8) + (changeinY*0.2));
+		
+		return result;
+	}
+	
+	public boolean diff(PVector currV, float prevY, float lastFrame){
+		
+		boolean goingDown = false;
+		
+		if (currV != null){
+			
+			float diffY = currV.y - prevY ;
+			
+			float currY = getCurrentChange(lastFrame, diffY);
+				
+				//don't change the intensity if there's no change
+				if (currY != 0){
+				
+					if ( currY >= 0.05 ){
+						goingDown = true;
+					}
+					
+					//if the difference is positive, don't change anything
+					else{
+						goingDown = false;
+					}
+				}
+			prevY = currV.y;
+			lastFrame = currY;
+			
+		}
+		
+		return goingDown;
+	}
+	
+	public int getIntensity(PVector p1, float prevY, float lastFrame){
+		
+		boolean curVal = diff(p1, prevY, lastFrame);
+		
+		int intensity = -1;
+		
+		if (curVal){
+			
+			float diff = p1.y - prevY;
+			
+			System.out.println("diff : " + diff);
+			
+			if (0 == diff){
+				 intensity = 0;
+			}
+			else if (diff > 0 && diff < 0.5){
+				 intensity = 1;
+			}
+			else if (diff > 0 && diff < 0.8 ){
+				 intensity = 2;
+			}
+			else{
+				intensity = 3;
+			}
+		}
+		
+		return intensity;
+	}
+>>>>>>> Stashed changes
 
 	}
 	
+<<<<<<< Updated upstream
 	// add flowers to represent head
 	public void drawHead(PVector vec){
 		
@@ -155,6 +249,16 @@ public class KinectRenderDemo extends PApplet {
 		image(f5[frame], vec.x-0.2f, vec.y, .15f, .15f);
 		image(f6[frame], vec.x-0.1f, vec.y-0.1f, .15f, .15f);
 		image(f7[frame], vec.x, vec.y, .1f, .1f);
+=======
+	public void drawToPurple(PVector vec){
+		if(vec != null){
+
+			fill(153,50,204);
+			//ellipse(vec.x, vec.y, .1f, .1f);
+
+			image(myAnimation, vec.x, vec.y, 0.3f, 0.3f);
+		}
+>>>>>>> Stashed changes
 	}
 	
 	
