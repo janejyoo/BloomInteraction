@@ -48,8 +48,8 @@ public class KinectRenderDemo extends PApplet {
 		
 	public void settings() {
 		//fullScreen(FX2D);
-		createWindow(true, true, .5f);
-		//size(800,800, FX2D);
+		//createWindow(true, true, .5f);
+		size(800,800, FX2D);
 	}
 
 	public void setup(){
@@ -88,7 +88,9 @@ public class KinectRenderDemo extends PApplet {
 		noStroke();
 	
 		KinectBodyData bodyData = kinectReader.getMostRecentData();
+		
 		Body person = bodyData.getPerson(0);
+		
 		if(person != null){
 			PVector head = person.getJoint(Body.HEAD);
 			PVector spine = person.getJoint(Body.SPINE_SHOULDER);
@@ -140,6 +142,42 @@ public class KinectRenderDemo extends PApplet {
 			
 		}
 
+	}
+	
+	public Boolean trackNoMotion () {
+		
+		//create Body object
+		
+		KinectBodyData motionData = kinectReader.getMostRecentData();
+		Body person = motionData.getPerson(0);
+		
+		PVector leftHandData = person.getJoint(Body.FOOT_LEFT);
+		System.out.println(leftHandData.x);
+		
+		//get last leftHand coordinates
+		//assign it as prev
+		//prev = leftHand.x
+				
+				//average velocity per threshold
+				//every frame--get position (get joint location)
+				//each frame, get y position, then get average change every 10 sec
+				//create data structure that keeps every 5 second 
+				//fixed sized buffer
+				//circular buffer
+		
+		//get current leftHand coordinates
+		//handLeft.x
+		//assign it as current
+		
+		//get last rightHand coordinates
+		//get current rightHand coordinates
+		
+		//compare
+		
+		//if there is difference of x threshold
+		//then return true
+		//else return false
+		
 	}
 	
 	// add flowers to represent head
