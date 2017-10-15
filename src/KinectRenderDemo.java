@@ -18,31 +18,32 @@ public class KinectRenderDemo extends PApplet {
 	// number of flowers in ArrayList
 	final static int NUM_FLOWERS = 50;
 	
-	// frame number of PImage[]
+	// holds current frame index number of PImage[]
 	int frame = 0;
 	
 	// each array has the frames of flower gif
 	PImage[] f1, f2, f3, f4, f5, f6, f7;
 
-	
 	// holds flowers
 	ArrayList<PImage[]> flowers;
 	
 	// true if the PImage arrays reach the last frame
 	boolean fullBloom = false;
 	
+	// projector ratio determined by eitan
 	public static float PROJECTOR_RATIO = 1080f/1920.0f;
 	
 	boolean pause = false;
 	
-	//hand Right
+	//handRight variables for getIntensity method
 	float HRprevY = 0;
 	float HRlastFrame = 0;
 	
-	//handLeft
+	//handLeft variables for getIntensity method
 	float HLprevY = 0;
 	float HLlastFrame = 0;
 
+	// creates window for application
 	public void createWindow(boolean useP2D, boolean isFullscreen, float windowsScale) {
 		if (useP2D) {
 			if(isFullscreen) {
@@ -68,13 +69,10 @@ public class KinectRenderDemo extends PApplet {
 		
 	public void settings() {
 		//fullScreen(FX2D);
-<<<<<<< HEAD
 		//createWindow(true, true, .5f);
 		size(800,800, FX2D);
-=======
 		createWindow(true, false, .8f);
 		//size(800,800, FX2D);
->>>>>>> 029269a196767c6b857291b2de5bbd211259d21b
 	}
 
 	public void setup(){
@@ -82,6 +80,7 @@ public class KinectRenderDemo extends PApplet {
 		setScale(.6f);
 		
 		flowers = new ArrayList<PImage[]>();
+		
 		// get each frame from flower gifs
 		f1 = Gif.getPImages(this, "flowers/f1.gif");
 		f2 = Gif.getPImages(this, "flowers/f2.gif");
@@ -117,27 +116,29 @@ public class KinectRenderDemo extends PApplet {
 		}catch(IOException e){
 			
 		}
-		
+		// start passing through body data from kinect
 		kinectReader.start();
 	}
 		
 	public void draw(){
-		//makes the window 2x2
+		// makes the window 2x2
 		this.scale(width/2.3f, -height/2.3f);
 		
-		//make positive y up and center of window 0,0
+		// make positive y up and center of window 0,0
 		translate(1,-1);
 		noStroke();
-
 		background(0);
-		
 		fill(255,0,255);
 		noStroke();
 	
+		// initialize bodyData object
 		KinectBodyData bodyData = kinectReader.getMostRecentData();
 		
+		// initialize person object
+		// use person methods to get coordinates of each body part
 		Body person = bodyData.getPerson(0);
 		
+		// assign body part coordinates to body part PVectors
 		if(person != null){
 			PVector head = person.getJoint(Body.HEAD);
 			PVector spine = person.getJoint(Body.SPINE_SHOULDER);
@@ -150,67 +151,48 @@ public class KinectRenderDemo extends PApplet {
 			PVector handRight = person.getJoint(Body.HAND_RIGHT);
 
 			fill(191, 0, 173);
-			
-			System.out.println("diff HR " + getIntensity(handRight, HRprevY, HRlastFrame) );
-			//System.out.println("diff HL " + diff(handLeft, HLprevY, HLlastFrame) );
 
 			fill(255,255,255);
 			noStroke();
 			
-			// draw circles 
-//			drawIfValid(head);
-//			drawIfValid(spine);
-//			drawIfValid(spineBase);
-//			drawIfValid(shoulderLeft);
-//			drawIfValid(shoulderRight);
-//			drawIfValid(footLeft);
-//			drawIfValid(footRight);
-//			drawIfValid(handLeft);
-//			drawIfValid(handRight);
-
-			
-//			if( (shoulderLeft != null) &&
-//					(shoulderRight != null) &&
-//					(handLeft != null) &&
-//					(handRight != null) ) {
-//				stroke(255,0,0, 100);
-//				noFill();
-//				strokeWeight(.05f); // because of scale weight needs to be much thinner
-//				curve(
-//						handLeft.x, handLeft.y, 
-//						shoulderLeft.x, shoulderLeft.y, 
-//						shoulderRight.x, shoulderRight.y,
-//						handRight.x, handRight.y
-//						);
-//			}
-			
-			// head
+			/* DRAW BODY PARTS */
 			drawHead(head);
-			// neck
 			drawNeck(head, spine);
-			// left leg
 			drawLimbs(spineBase, footLeft);
-			// right leg
 			drawLimbs(spineBase, footRight);
-			// left arm
 			drawLimbs(shoulderLeft, handLeft);
-			// right arm
 			drawLimbs(shoulderRight, handRight);
-			// torso
 			drawTorso(spine, spineBase, shoulderRight, shoulderLeft);
 			
-			
-			// make the flowers bloom and wither  
-			if(frame < f1.length-1 && !fullBloom){
-				frame++;
+			// check to see if we are tracking changes in y-intensity for both hands
+			System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensity(handLeft, HLprevY, HLlastFrame));
+			System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensity(handRight, HRprevY, HRlastFrame));
+
+			/* IF LEFT/RIGHT HAND INTENSITY > 0, BLOOM */
+			if (getIntensity(handRight, HRprevY, HRlastFrame) > 0 || getIntensity(handLeft, HLprevY, HLlastFrame) > 0) { 
+				if(frame < f1.length-1 && !fullBloom){
+					System.out.println("We live");
+					frame++;
+					/*if (mousePressed) {
+						System.out.println("mosueclicked");
+						frame++;
+					}*/
 				if(frame == f1.length-1)
 					fullBloom = true;
-			}
-			else if ( frame > 0 && fullBloom){
-				frame--;
+				}
+				else if ( frame > 0 && fullBloom){
+					frame--;
 				if(frame == 0)
 					fullBloom = false;
+				}
 			}
+			
+			/* ELSE IF LEFT/RIGHT HAND INTENSITY < 0, RESET TO FRAME 1 */
+			else if (getIntensity(handRight, HRprevY, HRlastFrame) < 0 || getIntensity(handLeft, HLprevY, HLlastFrame) < 0) { 
+				System.out.println("WE R.I.P :(");
+				frame = 1;
+			}
+			
 		}
 	}
 	
@@ -253,45 +235,13 @@ public class KinectRenderDemo extends PApplet {
 		return goingDown;
 	}
 	
-<<<<<<< HEAD
-	public Boolean trackNoMotion () {
-		
-		//create Body object
-		
-		KinectBodyData motionData = kinectReader.getMostRecentData();
-		Body person = motionData.getPerson(0);
-		
-		PVector leftHandData = person.getJoint(Body.FOOT_LEFT);
-		System.out.println(leftHandData.x);
-		
-		//get last leftHand coordinates
-		//assign it as prev
-		//prev = leftHand.x
-				
-				//average velocity per threshold
-				//every frame--get position (get joint location)
-				//each frame, get y position, then get average change every 10 sec
-				//create data structure that keeps every 5 second 
-				//fixed sized buffer
-				//circular buffer
-		
-		//get current leftHand coordinates
-		//handLeft.x
-		//assign it as current
-		
-		//get last rightHand coordinates
-		//get current rightHand coordinates
-		
-		//compare
-		
-		//if there is difference of x threshold
-		//then return true
-		//else return false
-		
-	}
 	
-	// add flowers to represent head
-=======
+	/* TAKES IN COORDINATES OF BODY PART AND RETURNS INTEGER REPRESENTING INTENSITY OF CHANGES IN Y-AXIS
+	 * No change --> Return 0
+	 * Slight change --> Return 1
+	 * Change --> Return 2
+	 * Big change --> Return 3
+	 */
 	public int getIntensity(PVector p1, float prevY, float lastFrame){
 		
 		boolean curVal = diff(p1, prevY, lastFrame);
@@ -327,8 +277,28 @@ public class KinectRenderDemo extends PApplet {
 		}
 
 	}
+	
+	// get coordinate points between two coordinates
+	public float[][] points(PVector vec1, PVector vec2){
+		float[][] position = new float[10][2];
+		
+		float f = 0;
+		
+		for(int i = 0; i < 10; i++){
+				position[i][0] = lerp(vec1.x, vec2.x, f);
+				position[i][1] = lerp(vec1.y, vec2.y, f);
+				f += .1f;
+		}
+		return position;
+	}
 
->>>>>>> 029269a196767c6b857291b2de5bbd211259d21b
+	/* FOLLOWING DRAW METHODS DRAW FLOWERS SO THAT EACH BODY PART IS COMPLETELY FILLED
+	 * drawHead
+	 * drawLimbs
+	 * drawNeck
+	 * drawTorso
+	 */
+	
 	public void drawHead(PVector vec){
 		if(vec == null)
 			return;
@@ -345,20 +315,6 @@ public class KinectRenderDemo extends PApplet {
 		
 	}
 	
-	// get coordinate points between two coordinates
-	public float[][] points(PVector vec1, PVector vec2){
-		float[][] position = new float[10][2];
-		
-		float f = 0;
-		
-		for(int i = 0; i < 10; i++){
-				position[i][0] = lerp(vec1.x, vec2.x, f);
-				position[i][1] = lerp(vec1.y, vec2.y, f);
-				f += .1f;
-		}
-		return position;
-	}
-
 	public void drawLimbs(PVector start, PVector end){
 		if(start == null || end == null)	
 			return;
@@ -414,7 +370,7 @@ public class KinectRenderDemo extends PApplet {
 		}
 	}
 	
-	
+	/* MAIN METHOD */
 	public static void main(String[] args) {
 		PApplet.main(KinectRenderDemo.class.getName());
 	}
