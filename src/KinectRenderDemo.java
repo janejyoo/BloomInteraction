@@ -112,10 +112,12 @@ public class KinectRenderDemo extends PApplet {
 		
 		
 		try{
-			kinectReader = new KinectBodyDataProvider("test.kinect", 5);
+			kinectReader = new KinectBodyDataProvider("test.kinect",6);
 		}catch(IOException e){
 			
 		}
+		//kinectReader = new KinectBodyDataProvider(8008);
+
 		// start passing through body data from kinect
 		kinectReader.start();
 	}
@@ -155,15 +157,6 @@ public class KinectRenderDemo extends PApplet {
 			fill(255,255,255);
 			noStroke();
 			
-			/* DRAW BODY PARTS */
-			drawHead(head);
-			drawNeck(head, spine);
-			drawLimbs(spineBase, footLeft);
-			drawLimbs(spineBase, footRight);
-			drawLimbs(shoulderLeft, handLeft);
-			drawLimbs(shoulderRight, handRight);
-			drawTorso(spine, spineBase, shoulderRight, shoulderLeft);
-			
 			// check to see if we are tracking changes in y-intensity for both hands
 			System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensity(handLeft, HLprevY, HLlastFrame));
 			System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensity(handRight, HRprevY, HRlastFrame));
@@ -192,6 +185,15 @@ public class KinectRenderDemo extends PApplet {
 				System.out.println("WE R.I.P :(");
 				frame = 1;
 			}
+			
+			/* DRAW BODY PARTS */
+			drawHead(head);
+			drawNeck(head, spine);
+			drawLimbs(spineBase, footLeft);
+			drawLimbs(spineBase, footRight);
+			drawLimbs(shoulderLeft, handLeft);
+			drawLimbs(shoulderRight, handRight);
+			drawTorso(spine, spineBase, shoulderRight, shoulderLeft);
 			
 		}
 	}
