@@ -129,7 +129,7 @@ public class KinectRenderDemo extends PApplet {
 		// make positive y up and center of window 0,0
 		translate(1,-1);
 		noStroke();
-		background(255, 204, 0);
+		background( 0);
 		fill(255,0,255);
 		noStroke();
 	
@@ -153,16 +153,21 @@ public class KinectRenderDemo extends PApplet {
 			PVector handRight = person.getJoint(Body.HAND_RIGHT);
 
 			fill(191, 0, 173);
-
 			fill(255,255,255);
 			noStroke();
+			
+			//String to display group project info
+			/*String s = "Bloom Interaction 2017 \na Jane Yoo, Onji Bae, Sujin Kim, Crystal Seo";
+			textSize(32);
+			fill (255);
+			text(s,0,0,10,10);*/
 			
 			// check to see if we are tracking changes in y-intensity for both hands
 			System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensity(handLeft, HLprevY, HLlastFrame));
 			System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensity(handRight, HRprevY, HRlastFrame));
 
 			/* IF LEFT/RIGHT HAND INTENSITY > 0, BLOOM */
-			if (getIntensity(handRight, HRprevY, HRlastFrame) > 0 || getIntensity(handLeft, HLprevY, HLlastFrame) > 0) { 
+			if (getIntensity(handRight, HRprevY, HRlastFrame) > -1 || getIntensity(handLeft, HLprevY, HLlastFrame) > -1) { 
 				if(frame < f1.length-1 && !fullBloom){
 					System.out.println("We live");
 					frame++;
@@ -181,14 +186,14 @@ public class KinectRenderDemo extends PApplet {
 			}
 			
 			/* ELSE IF LEFT/RIGHT HAND INTENSITY < 0, RESET TO FRAME 1 */
-			else if (getIntensity(handRight, HRprevY, HRlastFrame) < 0 || getIntensity(handLeft, HLprevY, HLlastFrame) < 0) { 
+			else if (getIntensity(handRight, HRprevY, HRlastFrame) < -1 || getIntensity(handLeft, HLprevY, HLlastFrame) < -1) { 
 				System.out.println("WE R.I.P :(");
 				frame = 1;
 			}
 			
 			/* DRAW BODY PARTS */
 			drawHead(head);
-			drawNeck(head, spine);
+			/*drawNeck(head, spine);*/
 			drawLimbs(spineBase, footLeft);
 			drawLimbs(spineBase, footRight);
 			drawLimbs(shoulderLeft, handLeft);
@@ -301,6 +306,7 @@ public class KinectRenderDemo extends PApplet {
 	 * drawTorso
 	 */
 	
+	//needs revision so head placement is more accurate
 	public void drawHead(PVector vec){
 		if(vec == null)
 			return;
@@ -309,7 +315,7 @@ public class KinectRenderDemo extends PApplet {
 		image(flowers.get(11)[frame], vec.x+.07f, vec.y, .1f, .1f);
 		image(flowers.get(12)[frame], vec.x+.035f, vec.y+.035f, .08f, .08f);
 		image(flowers.get(13)[frame], vec.x+.035f, vec.y-.035f, .08f, .08f);
-		image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .3f, .3f);
+		image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .08f, .08f);
 		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .08f, .08f);
 		image(flowers.get(16)[frame], vec.x-.07f, vec.y, .1f, .1f);
 		image(flowers.get(17)[frame], vec.x, vec.y-0.07f, .1f, .1f);
@@ -317,9 +323,9 @@ public class KinectRenderDemo extends PApplet {
 		
 		//image(flowers.get(16)[frame], vec.x+.035f, vec.y+.035f, .3f, .3f);
 		//image(flowers.get(16)[frame], vec.x-.07f, vec.y, .1f, .1f);
-		//image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .25f, .25f);
-		image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .3f, .3f);
-
+		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .25f, .25f);
+		//image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .3f, .3f);
+		//image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .08f, .08f);
 
 
 
@@ -341,7 +347,7 @@ public class KinectRenderDemo extends PApplet {
 			else{
 /*				image(flowers.get(i)[frame], position[i][0]-.02f, position[i][1], .15f, .15f);
 				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]+.02f, position[i][1]-.02f, .1f, .1f);*/
-				System.out.println("drawLimbs: else"); //ended out prior two lines so that flower on limbs would be more sparse -- aesthetic value
+				//System.out.println("drawLimbs: else"); //ended out prior two lines so that flower on limbs would be more sparse -- aesthetic value
 			}
 		}
 	}
@@ -364,19 +370,19 @@ public class KinectRenderDemo extends PApplet {
 		float[][] position = points(spine, spineBase);
 		for(int i = 0; i < position.length; i++){
 			if( i%2 == 0 ){
-				image(flowers.get(i)[frame], position[i][0]+.02f, position[i][1]-.02f, .1f, .1f);
-				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]-.02f, position[i][1], .1f, .1f);
+				image(flowers.get(i)[frame], position[i][0]+.02f, position[i][1]-.02f, .18f, .18f);
+				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]-.02f, position[i][1], .18f, .18f);
 			}
 			else{
-				image(flowers.get(i)[frame], position[i][0]-.02f, position[i][1], .09f, .09f);
-				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]+.02f, position[i][1]-.02f, .1f, .1f);
+				image(flowers.get(i)[frame], position[i][0]-.02f, position[i][1], .18f, .18f);
+				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]+.02f, position[i][1]-.02f, .18f, .18f);
 			}
 		}
 		
 		for(int i = 0; i < position.length; i++){
-			image(flowers.get(i+10)[frame], position[i][0]+0.1f, position[i][1], .09f, .09f);
+			image(flowers.get(i+10)[frame], position[i][0]+0.1f, position[i][1], .18f, .18f);
 			image(flowers.get(flowers.size()-i-1)[frame], position[i][0]+0.07f, position[i][1], .06f, .06f);
-			image(flowers.get(i+20)[frame], position[i][0]-0.1f, position[i][1], .09f, .09f);
+			image(flowers.get(i+20)[frame], position[i][0]-0.1f, position[i][1], .18f, .18f);
 			image(flowers.get(flowers.size()-i-1)[frame], position[i][0]-0.05f, position[i][1], .06f, .06f);
 		}
 	}
