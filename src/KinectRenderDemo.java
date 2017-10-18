@@ -37,14 +37,14 @@ public class KinectRenderDemo extends PApplet {
 	
 	//handRight variables for getIntensity method
 	float HRprevY = 0;
-	float HRlastFrame = 0;
+	float HRVelocity = 0;
 	boolean HRgoingUp = false;
 	float HRcurrY = 0;
 	int HRintensity = -1;
 	
 	//handLeft variables for getIntensity method
 	float HLprevY = 0;
-	float HLlastFrame = 0;
+	float HLVelocity = 0;
 	boolean HLgoingUp = false;
 	float HLcurrY = 0;
 	int HLintensity = -1;
@@ -169,8 +169,8 @@ public class KinectRenderDemo extends PApplet {
 			text(s,0,0,10,10);*/
 			
 			// check to see if we are tracking changes in y-intensity for both hands
-			System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensityHL(handLeft));
-			System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensityHR(handRight));
+			//System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensityHL(handLeft));
+			//System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensityHR(handRight));
 			
 			fill(191, 0, 173);	
 			System.out.println("diff HR " + getIntensityHR(handRight));
@@ -260,110 +260,87 @@ public class KinectRenderDemo extends PApplet {
 		}
 	}
 	
-	//velocity and change in y
-	//90% of the old change (change in the last frame) + 10% of the new change (current and last)
-	public float getCurrentChange(float lastframe, float changeinY){
+	//calculate the y difference between current location and the last location
+	public float diffVel(float oldVel, float lastY,  float curY){
 		
-		float result = (float) ((lastframe*0.8) + (changeinY*0.2));
-		
-		return result;
-	}
-	
-	public float diffHR(PVector currV){
-		
-		if (currV != null){
-			
-			float diffY = currV.y - HRprevY;
+			float diffY = curY - lastY;
 			
 			if (diffY != 0){
 
-				HRcurrY = getCurrentChange(HRlastFrame, diffY);
-				
-				//if the current change is negative, the movement is going down
-				if (HRcurrY < 0.004){
-					HRgoingUp = false;
-				}
-				
-				else{	
-					HRgoingUp = true;
-				}
-
-				HRprevY = currV.y;
-				HRlastFrame = HRcurrY;
+				return (float) ((oldVel*0.8) + (diffY*0.2));
+			} else {
+			 return  oldVel;
 			}
-			
-		}
+	}
+	
+	//change the state goingUp to determine if Hand Left is moving up
+	public void diffHL(PVector handLeft){
 		
-		return HRcurrY;
+		if (handLeft != null){
+			HLVelocity = diffVel(HLVelocity, HLprevY, handLeft.y);
+			
+			if (HLVelocity < 0.004){
+				HLgoingUp = false;
+			} else{	
+				HLgoingUp = true;
+			}
+			HLprevY =  handLeft.y;
+		}
+
+	}
+	
+	//change the state goingUp to determine if Hand Right is moving up
+	public void diffHR(PVector handRight){
+		
+		if (handRight != null){
+			HRVelocity = diffVel(HRVelocity, HRprevY, handRight.y);
+			
+			if (HRVelocity < 0.004){
+				HRgoingUp = false;
+			} else{	
+				HRgoingUp = true;
+			}
+			HRprevY =  handRight.y;
+		}
+
 	}
 	
 	
-	/* TAKES IN COORDINATES OF BODY PART AND RETURNS INTEGER REPRESENTING INTENSITY OF CHANGES IN Y-AXIS
-	 * No change --> Return 0
-	 * Slight change --> Return 1
-	 * Change --> Return 2
-	 * Big change --> Return 3
+	/* TAKES IN COORDINATES OF HAND RIGHT AND RETURNS INTEGER REPRESENTING INTENSITY OF CHANGES IN Y-AXIS
+	 * No change --> Return -1
+	 * Minimal change --> Return 1
+	 * Slight change --> Return 2
+	 * Change --> Return 3
+	 * More Change --> Return 4
+	 * Big change --> Return 5
 	 */
-//	public int getIntensity(PVector p1, float prevY, float lastFrame){
-//		
-//		boolean curVal = diff(p1, prevY, lastFrame);
-//	}
-	public float diffHL(PVector currV){
-		
-		if (currV != null){
-			
-			float diffY = currV.y - HLprevY;
-			
-			if (diffY != 0){
-
-				HLcurrY = getCurrentChange(HLlastFrame, diffY);
-				
-				//if the current change is negative, the movement is going down
-				if (HLcurrY < 0.004){
-					HLgoingUp = false;
-				}
-				
-				else{	
-					HLgoingUp = true;
-				}
-
-				HLprevY = currV.y;
-				HLlastFrame = HLcurrY;
-			}
-			
-		}
-		
-		return HLcurrY;
-	}
-	
-	
-	// add flowers to represent head
-public int getIntensityHR(PVector p1){
+	public int getIntensityHR(PVector p1){
 		
 		int intensity = -1;
 		
-		float diff = diffHR(p1);
+		diffHR(p1);
 		
 		//HRgoingUp is the previous value
 		if (p1!=null){	
+			
 			if (HRgoingUp){
 			
-				if (diff == 0)	{
-					//intensity = 0;
+				if (HRVelocity == 0)	{
+					return intensity;
 				}
-				else if (diff < 0.01){
+				else if (HRVelocity < 0.01){
 					 intensity = 1;
 				}
-				else if (diff < 0.02){
+				else if (HRVelocity < 0.02){
 					 intensity = 2;
 				}
-				else if (diff < 0.03 ){
+				else if (HRVelocity < 0.03 ){
 					 intensity = 3;
 				}
-				else if (diff <  0.06 ){
+				else if (HRVelocity <  0.06 ){
 					 intensity = 4;
 				}
-				else if (diff > 0.06) {
+				else if (HRVelocity > 0.06) {
 					 intensity = 5;
 				}
 				
@@ -374,38 +351,47 @@ public int getIntensityHR(PVector p1){
 		return intensity;
 	}
 	
-public int getIntensityHL(PVector p1){
+	/* TAKES IN COORDINATES OF HAND LEFT AND RETURNS INTEGER REPRESENTING INTENSITY OF CHANGES IN Y-AXIS
+	 * No change --> Return -1
+	 * Minimal change --> Return 1
+	 * Slight change --> Return 2
+	 * Change --> Return 3
+	 * More Change --> Return 4
+	 * Big change --> Return 5
+	 */
+	public int getIntensityHL(PVector p1){
 		
 		int intensity = -1;
 		
-		float diff = diffHL(p1);
-		
-		//HRgoingUp is the previous value
 		if (p1!=null){	
+
+			diffHL(p1);
+			
 			if (HLgoingUp){
 			
-				if (diff == 0)	{
-					//intensity = 0;
+				if (HLVelocity == 0)	{
+					return intensity;
 				}
-				else if (diff < 0.01){
+				else if (HLVelocity < 0.01){
 					 intensity = 1;
 				}
-				else if (diff < 0.02){
+				else if (HLVelocity < 0.02){
 					 intensity = 2;
 				}
-				else if (diff < 0.03 ){
+				else if (HLVelocity < 0.03 ){
 					 intensity = 3;
 				}
-				else if (diff <  0.06 ){
+				else if (HLVelocity <  0.06 ){
 					 intensity = 4;
 				}
-				else if (diff > 0.06) {
+				else if (HLVelocity > 0.06) {
 					 intensity = 5;
 				}
 				
 				}
 			
 			}
+		
 		
 		return intensity;
 	}
