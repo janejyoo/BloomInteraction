@@ -110,16 +110,19 @@ public class KinectRenderDemo extends PApplet {
 				flowers.add(f7);
 		}
 		
+		//LIVE
+/*		kinectReader = new KinectBodyDataProvider(8008);
+		kinectReader.start();*/
 		
+		//recorded UDP
 		try{
 			kinectReader = new KinectBodyDataProvider("test.kinect",6);
 		}catch(IOException e){
 			
 		}
-		//kinectReader = new KinectBodyDataProvider(8008);
-
-		// start passing through body data from kinect
 		kinectReader.start();
+		
+		
 	}
 		
 	public void draw(){
