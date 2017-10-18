@@ -1,15 +1,1 @@
 /.metadata/
-/.DS_Store
-/Body.class
-/KinectBodyData.class
-/KinectBodyDataProvider.class
-/KinectRenderDemo.class
-/Msg.class
-/MsgProvider.class
-/Quat.class
-/UDPPlayer.class
-/UDPReceiver.class
-/UDPRecorder.class
-/UsingProcessing.class
-/bloom_KRD.class
-/frameTest.class

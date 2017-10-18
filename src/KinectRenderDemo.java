@@ -116,16 +116,19 @@ public class KinectRenderDemo extends PApplet {
 				flowers.add(f7);
 		}
 		
+		//LIVE
+/*		kinectReader = new KinectBodyDataProvider(8008);
+		kinectReader.start();*/
 		
+		//recorded UDP
 		try{
 			kinectReader = new KinectBodyDataProvider("test.kinect",6);
 		}catch(IOException e){
 			
 		}
-		//kinectReader = new KinectBodyDataProvider(8008);
-
-		// start passing through body data from kinect
 		kinectReader.start();
+		
+		
 	}
 		
 	public void draw(){
@@ -314,6 +317,7 @@ public class KinectRenderDemo extends PApplet {
 	 * More Change --> Return 4
 	 * Big change --> Return 5
 	 */
+	// add flowers to represent head
 	public int getIntensityHR(PVector p1){
 		
 		int intensity = -1;
@@ -402,22 +406,6 @@ public class KinectRenderDemo extends PApplet {
 		}
 
 	}
-
-	public void drawHead(PVector vec){
-		if(vec == null)
-			return;
-		
-		image(flowers.get(10)[frame], vec.x, vec.y, .1f, .1f);
-		image(flowers.get(11)[frame], vec.x+.07f, vec.y, .1f, .1f);
-		image(flowers.get(12)[frame], vec.x+.035f, vec.y+.035f, .08f, .08f);
-		image(flowers.get(13)[frame], vec.x+.035f, vec.y-.035f, .08f, .08f);
-		image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .08f, .08f);
-		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .08f, .08f);
-		image(flowers.get(16)[frame], vec.x-.07f, vec.y, .1f, .1f);
-		image(flowers.get(17)[frame], vec.x, vec.y-0.07f, .1f, .1f);
-		image(flowers.get(18)[frame], vec.x, vec.y+0.07f, .1f, .1f);
-		
-	}
 	
 	// get coordinate points between two coordinates
 	public float[][] points(PVector vec1, PVector vec2){
@@ -440,12 +428,11 @@ public class KinectRenderDemo extends PApplet {
 	 * drawTorso
 	 */
 	
-	//needs revision so head placement is more accurate
-//	public void drawHead(PVector vec){
-//		if(vec == null)
-//			return;
+	public void drawHead(PVector vec){
+		if(vec == null)
+			return;
 		
-		/*image(flowers.get(10)[frame], vec.x, vec.y, .1f, .1f);
+		image(flowers.get(10)[frame], vec.x, vec.y, .1f, .1f);
 		image(flowers.get(11)[frame], vec.x+.07f, vec.y, .1f, .1f);
 		image(flowers.get(12)[frame], vec.x+.035f, vec.y+.035f, .08f, .08f);
 		image(flowers.get(13)[frame], vec.x+.035f, vec.y-.035f, .08f, .08f);
@@ -453,17 +440,9 @@ public class KinectRenderDemo extends PApplet {
 		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .08f, .08f);
 		image(flowers.get(16)[frame], vec.x-.07f, vec.y, .1f, .1f);
 		image(flowers.get(17)[frame], vec.x, vec.y-0.07f, .1f, .1f);
-		image(flowers.get(18)[frame], vec.x, vec.y+0.07f, .1f, .1f);*/
+		image(flowers.get(18)[frame], vec.x, vec.y+0.07f, .1f, .1f);
 		
-		//image(flowers.get(16)[frame], vec.x+.035f, vec.y+.035f, .3f, .3f);
-		//image(flowers.get(16)[frame], vec.x-.07f, vec.y, .1f, .1f);
-//		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .25f, .25f);
-		//image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .3f, .3f);
-		//image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .08f, .08f);
-
-
-
-//	}
+	}
 	
 	public void drawLimbs(PVector start, PVector end){
 		if(start == null || end == null)	
