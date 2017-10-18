@@ -38,10 +38,16 @@ public class KinectRenderDemo extends PApplet {
 	//handRight variables for getIntensity method
 	float HRprevY = 0;
 	float HRlastFrame = 0;
+	boolean HRgoingUp = false;
+	float HRcurrY = 0;
+	int HRintensity = -1;
 	
 	//handLeft variables for getIntensity method
 	float HLprevY = 0;
 	float HLlastFrame = 0;
+	boolean HLgoingUp = false;
+	float HLcurrY = 0;
+	int HLintensity = -1;
 
 	// creates window for application
 	public void createWindow(boolean useP2D, boolean isFullscreen, float windowsScale) {
@@ -163,11 +169,29 @@ public class KinectRenderDemo extends PApplet {
 			text(s,0,0,10,10);*/
 			
 			// check to see if we are tracking changes in y-intensity for both hands
-			System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensity(handLeft, HLprevY, HLlastFrame));
-			System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensity(handRight, HRprevY, HRlastFrame));
+			System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensityHL(handLeft));
+			System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensityHR(handRight));
+			
+			fill(191, 0, 173);	
+			System.out.println("diff HR " + getIntensityHR(handRight));
+			System.out.println("diff HL " + getIntensityHL(handLeft) );
+
+			fill(255,255,255);
+			noStroke();
+			
+			// draw circles 
+			drawIfValid(head);
+			drawIfValid(spine);
+			drawIfValid(spineBase);
+			drawIfValid(shoulderLeft);
+			drawIfValid(shoulderRight);
+			drawIfValid(footLeft);
+			drawIfValid(footRight);
+			drawIfValid(handLeft);
+			drawIfValid(handRight);
 
 			/* IF LEFT/RIGHT HAND INTENSITY > 0, BLOOM */
-			if (getIntensity(handRight, HRprevY, HRlastFrame) > -1 || getIntensity(handLeft, HLprevY, HLlastFrame) > -1) { 
+			if (getIntensityHR(handRight) > -1 || getIntensityHL(handLeft) > -1) { 
 				if(frame < f1.length-1 && !fullBloom){
 					System.out.println("We live");
 					frame++;
@@ -186,7 +210,7 @@ public class KinectRenderDemo extends PApplet {
 			}
 			
 			/* ELSE IF LEFT/RIGHT HAND INTENSITY < 0, RESET TO FRAME 1 */
-			else if (getIntensity(handRight, HRprevY, HRlastFrame) < -1 || getIntensity(handLeft, HLprevY, HLlastFrame) < -1) { 
+			else if (getIntensityHR(handRight) < -1 || getIntensityHL(handLeft) < -1) { 
 				System.out.println("WE R.I.P :(");
 				frame = 1;
 			}
@@ -199,7 +223,40 @@ public class KinectRenderDemo extends PApplet {
 			drawLimbs(shoulderLeft, handLeft);
 			drawLimbs(shoulderRight, handRight);
 			drawTorso(spine, spineBase, shoulderRight, shoulderLeft);
+
+			if(head != null){
+				// add flowers
+				// head
+//				drawHead(head);
+//				// neck
+//				drawNeck(head, spine);
+//				// left leg
+//				drawLimbs(spineBase, footLeft);
+//				// right leg
+//				drawLimbs(spineBase, footRight);
+//				// left arm
+//				drawLimbs(shoulderLeft, handLeft);
+//				// right arm
+//				drawLimbs(shoulderRight, handRight);
+//				// torso
+//				drawTorso(spine, spineBase, shoulderRight, shoulderLeft);
+				
+				if(frame < f1.length-1){
+					frame++;
+				}
+			}
 			
+			// make the flowers bloom and wither  
+			if(frame < f1.length-1 && !fullBloom){
+				frame++;
+				if(frame == f1.length-1)
+					fullBloom = true;
+			}
+			else if ( frame > 0 && fullBloom){
+				frame--;
+				if(frame == 0)
+					fullBloom = false;
+			}
 		}
 	}
 	
@@ -212,34 +269,32 @@ public class KinectRenderDemo extends PApplet {
 		return result;
 	}
 	
-	public boolean diff(PVector currV, float prevY, float lastFrame){
-		
-		boolean goingDown = false;
+	public float diffHR(PVector currV){
 		
 		if (currV != null){
 			
-			float diffY = currV.y - prevY ;
+			float diffY = currV.y - HRprevY;
 			
-			float currY = getCurrentChange(lastFrame, diffY);
+			if (diffY != 0){
+
+				HRcurrY = getCurrentChange(HRlastFrame, diffY);
 				
-				//don't change the intensity if there's no change
-				if (currY != 0){
-				
-					if ( currY >= 0.05 ){
-						goingDown = true;
-					}
-					
-					//if the difference is positive, don't change anything
-					else{
-						goingDown = false;
-					}
+				//if the current change is negative, the movement is going down
+				if (HRcurrY < 0.004){
+					HRgoingUp = false;
 				}
-			prevY = currV.y;
-			lastFrame = currY;
+				
+				else{	
+					HRgoingUp = true;
+				}
+
+				HRprevY = currV.y;
+				HRlastFrame = HRcurrY;
+			}
 			
 		}
 		
-		return goingDown;
+		return HRcurrY;
 	}
 	
 	
@@ -249,31 +304,108 @@ public class KinectRenderDemo extends PApplet {
 	 * Change --> Return 2
 	 * Big change --> Return 3
 	 */
-	public int getIntensity(PVector p1, float prevY, float lastFrame){
+//	public int getIntensity(PVector p1, float prevY, float lastFrame){
+//		
+//		boolean curVal = diff(p1, prevY, lastFrame);
+//	}
+	public float diffHL(PVector currV){
 		
-		boolean curVal = diff(p1, prevY, lastFrame);
+		if (currV != null){
+			
+			float diffY = currV.y - HLprevY;
+			
+			if (diffY != 0){
+
+				HLcurrY = getCurrentChange(HLlastFrame, diffY);
+				
+				//if the current change is negative, the movement is going down
+				if (HLcurrY < 0.004){
+					HLgoingUp = false;
+				}
+				
+				else{	
+					HLgoingUp = true;
+				}
+
+				HLprevY = currV.y;
+				HLlastFrame = HLcurrY;
+			}
+			
+		}
+		
+		return HLcurrY;
+	}
+	
+	
+	// add flowers to represent head
+public int getIntensityHR(PVector p1){
 		
 		int intensity = -1;
 		
-		if (curVal){
+		float diff = diffHR(p1);
+		
+		//HRgoingUp is the previous value
+		if (p1!=null){	
+			if (HRgoingUp){
 			
-			float diff = p1.y - prevY;
+				if (diff == 0)	{
+					//intensity = 0;
+				}
+				else if (diff < 0.01){
+					 intensity = 1;
+				}
+				else if (diff < 0.02){
+					 intensity = 2;
+				}
+				else if (diff < 0.03 ){
+					 intensity = 3;
+				}
+				else if (diff <  0.06 ){
+					 intensity = 4;
+				}
+				else if (diff > 0.06) {
+					 intensity = 5;
+				}
+				
+				}
 			
-			System.out.println("diff : " + diff);
+			}
+		
+		return intensity;
+	}
+	
+public int getIntensityHL(PVector p1){
+		
+		int intensity = -1;
+		
+		float diff = diffHL(p1);
+		
+		//HRgoingUp is the previous value
+		if (p1!=null){	
+			if (HLgoingUp){
 			
-			if (0 == diff){
-				 intensity = 0;
+				if (diff == 0)	{
+					//intensity = 0;
+				}
+				else if (diff < 0.01){
+					 intensity = 1;
+				}
+				else if (diff < 0.02){
+					 intensity = 2;
+				}
+				else if (diff < 0.03 ){
+					 intensity = 3;
+				}
+				else if (diff <  0.06 ){
+					 intensity = 4;
+				}
+				else if (diff > 0.06) {
+					 intensity = 5;
+				}
+				
+				}
+			
 			}
-			else if (diff > 0 && diff < 0.5){
-				 intensity = 1;
-			}
-			else if (diff > 0 && diff < 0.8 ){
-				 intensity = 2;
-			}
-			else{
-				intensity = 3;
-			}
-		}
 		
 		return intensity;
 	}
@@ -283,6 +415,22 @@ public class KinectRenderDemo extends PApplet {
 			ellipse(vec.x, vec.y, .1f,.1f);
 		}
 
+	}
+
+	public void drawHead(PVector vec){
+		if(vec == null)
+			return;
+		
+		image(flowers.get(10)[frame], vec.x, vec.y, .1f, .1f);
+		image(flowers.get(11)[frame], vec.x+.07f, vec.y, .1f, .1f);
+		image(flowers.get(12)[frame], vec.x+.035f, vec.y+.035f, .08f, .08f);
+		image(flowers.get(13)[frame], vec.x+.035f, vec.y-.035f, .08f, .08f);
+		image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .08f, .08f);
+		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .08f, .08f);
+		image(flowers.get(16)[frame], vec.x-.07f, vec.y, .1f, .1f);
+		image(flowers.get(17)[frame], vec.x, vec.y-0.07f, .1f, .1f);
+		image(flowers.get(18)[frame], vec.x, vec.y+0.07f, .1f, .1f);
+		
 	}
 	
 	// get coordinate points between two coordinates
@@ -307,9 +455,9 @@ public class KinectRenderDemo extends PApplet {
 	 */
 	
 	//needs revision so head placement is more accurate
-	public void drawHead(PVector vec){
-		if(vec == null)
-			return;
+//	public void drawHead(PVector vec){
+//		if(vec == null)
+//			return;
 		
 		/*image(flowers.get(10)[frame], vec.x, vec.y, .1f, .1f);
 		image(flowers.get(11)[frame], vec.x+.07f, vec.y, .1f, .1f);
@@ -323,13 +471,13 @@ public class KinectRenderDemo extends PApplet {
 		
 		//image(flowers.get(16)[frame], vec.x+.035f, vec.y+.035f, .3f, .3f);
 		//image(flowers.get(16)[frame], vec.x-.07f, vec.y, .1f, .1f);
-		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .25f, .25f);
+//		image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .25f, .25f);
 		//image(flowers.get(14)[frame], vec.x-.035f, vec.y+.035f, .3f, .3f);
 		//image(flowers.get(15)[frame], vec.x-.035f, vec.y-.035f, .08f, .08f);
 
 
 
-	}
+//	}
 	
 	public void drawLimbs(PVector start, PVector end){
 		if(start == null || end == null)	
