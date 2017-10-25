@@ -15,7 +15,7 @@ public class KinectRenderDemo extends PApplet {
 	KinectBodyDataProvider kinectReader;
 	
 	// number of flowers in ArrayList
-	final static int NUM_FLOWERS = 50;
+	final static int NUM_FLOWERS = 301;
 	
 	// holds current frame index number of PImage[]
 	int frame = 0;
@@ -193,7 +193,7 @@ public class KinectRenderDemo extends PApplet {
 			drawIfValid(handRight);
 
 			/* IF LEFT/RIGHT HAND INTENSITY > 0, BLOOM */
-			if (getIntensityHR(handRight) > -1 || getIntensityHL(handLeft) > -1) { 
+			if (getIntensityHR(handRight) > 0 || getIntensityHL(handLeft) > 0) { 
 				if(frame < f1.length-1 && !fullBloom){
 					System.out.println("We live");
 					frame++;
@@ -212,7 +212,7 @@ public class KinectRenderDemo extends PApplet {
 			}
 			
 			/* ELSE IF LEFT/RIGHT HAND INTENSITY < 0, RESET TO FRAME 1 */
-			else if (getIntensityHR(handRight) < -1 || getIntensityHL(handLeft) < -1) { 
+			else if (getIntensityHR(handRight) < 0 || getIntensityHL(handLeft) < 0) { 
 				System.out.println("WE R.I.P :(");
 				frame = 1;
 			}
