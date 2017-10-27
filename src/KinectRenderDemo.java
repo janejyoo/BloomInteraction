@@ -14,7 +14,7 @@ public class KinectRenderDemo extends PApplet {
 	KinectBodyDataProvider kinectReader;
 	
 	// number of flowers in ArrayList
-	final static int NUM_FLOWERS = 230;
+	final static int NUM_FLOWERS = 301;
 	
 	// holds current frame index number of PImage[]
 	int frame = 0;
