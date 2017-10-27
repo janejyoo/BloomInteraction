@@ -151,7 +151,13 @@ public class KinectRenderDemo extends PApplet {
 			PVector footLeft = person.getJoint(Body.FOOT_LEFT);
 			PVector footRight = person.getJoint(Body.FOOT_RIGHT);
 			PVector handLeft = person.getJoint(Body.HAND_LEFT);
-			PVector handRight = person.getJoint(Body.HAND_RIGHT);
+			PVector handRight = person.getJoint(Body.HAND_RIGHT);			
+			//added more joints from original box-like flower body
+			PVector elbowLeft = person.getJoint(Body.ELBOW_LEFT);
+			PVector elbowRight = person.getJoint(Body.ELBOW_RIGHT);
+			PVector kneeLeft = person.getJoint(Body.KNEE_LEFT);
+			PVector kneeRight = person.getJoint(Body.KNEE_RIGHT);
+			
 
 			fill(191, 0, 173);
 			fill(255,255,255);
@@ -161,10 +167,14 @@ public class KinectRenderDemo extends PApplet {
 
 			/* DRAW BODY PARTS */
 			drawHead(head);
-			drawLimbs(spineBase, footLeft);
-			drawLimbs(spineBase, footRight);
-			drawLimbs(shoulderLeft, handLeft);
-			drawLimbs(shoulderRight, handRight);
+			drawLimbs(spineBase, kneeLeft);
+			drawLimbs(kneeLeft, footLeft);
+			drawLimbs(spineBase,kneeRight);
+			drawLimbs(kneeRight, footRight);
+			drawLimbs(shoulderLeft, elbowLeft);
+			drawLimbs(shoulderRight, elbowRight);
+			drawLimbs(elbowLeft, handLeft);
+			drawLimbs(elbowRight, handRight);
 			drawTorso(spine, spineBase, shoulderRight, shoulderLeft);
 
 			System.out.println(frame);
