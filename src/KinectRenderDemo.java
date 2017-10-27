@@ -14,13 +14,13 @@ public class KinectRenderDemo extends PApplet {
 	KinectBodyDataProvider kinectReader;
 	
 	// number of flowers in ArrayList
-	final static int NUM_FLOWERS = 301;
+	final static int NUM_FLOWERS = 230;
 	
 	// holds current frame index number of PImage[]
 	int frame = 0;
 	
 	// each array has the frames of flower gif
-	PImage[] f1, f2, f3, f4, f5, f6, f7;
+	PImage[] f1, f2, f3, f4, f5;
 
 	// holds flowers
 	ArrayList<PImage[]> flowers;
@@ -88,12 +88,10 @@ public class KinectRenderDemo extends PApplet {
 		// get each frame from flower gifs
 		f1 = Gif.getPImages(this, "flowers/f1.gif");
 		f2 = Gif.getPImages(this, "flowers/f2.gif");
-		//f3 = Gif.getPImages(this, "flowers/f3.gif");
+		f3 = Gif.getPImages(this, "flowers/f3.gif");
 		f4 = Gif.getPImages(this, "flowers/f4.gif");
 		f5 = Gif.getPImages(this, "flowers/f5.gif");
-		f6 = Gif.getPImages(this, "flowers/f6.gif");
-		//f7 = Gif.getPImages(this, "flowers/f7.gif");
-		
+
 		// add flowers to ArrayList randomly 
 		for(int i = 0; i < NUM_FLOWERS; i++){
 			int random = (int)(Math.random()*5)+1;
@@ -103,16 +101,11 @@ public class KinectRenderDemo extends PApplet {
 			else if(random == 2)
 				flowers.add(f2);
 			else if(random == 3)
-				flowers.add(f4);
-				//flowers.add(f3);
+				flowers.add(f3);
 			else if(random == 4)
-				flowers.add(f5);
+				flowers.add(f4);
 			else if(random == 5)
-				flowers.add(f6);
-//			else if(random == 6)
-//				flowers.add(f6);
-//			else if(random == 7)
-//				flowers.add(f7);
+				flowers.add(f5);
 		}
 		
 		//LIVE
@@ -163,33 +156,9 @@ public class KinectRenderDemo extends PApplet {
 			fill(191, 0, 173);
 			fill(255,255,255);
 			noStroke();
-			
-			//String to display group project info
-			/*String s = "Bloom Interaction 2017 \na Jane Yoo, Onji Bae, Sujin Kim, Crystal Seo";
-			textSize(32);
-			fill (255);
-			text(s,0,0,10,10);*/
-			
-			// check to see if we are tracking changes in y-intensity for both hands
-			//System.out.println("LEFTHAND: testing getIntensity() int output"+getIntensityHL(handLeft));
-			//System.out.println("RIGHTHAND: testing getIntensity() int output"+getIntensityHR(handRight));
-			
+						
 			System.out.println("diff HL " + getIntensity(handRight, handLeft) );
 
-			
-//			fill(255,255,255);
-//			noStroke();			
-			// draw circles 
-//			drawIfValid(head);
-//			drawIfValid(spine);
-//			drawIfValid(spineBase);
-//			drawIfValid(shoulderLeft);
-//			drawIfValid(shoulderRight);
-//			drawIfValid(footLeft);
-//			drawIfValid(footRight);
-//			drawIfValid(handLeft);
-//			drawIfValid(handRight);
-			
 			/* DRAW BODY PARTS */
 			drawHead(head);
 			drawLimbs(spineBase, footLeft);
@@ -202,22 +171,22 @@ public class KinectRenderDemo extends PApplet {
 			
 			/* IF LEFT/RIGHT HAND INTENSITY > 0, BLOOM */
 
-			if( getIntensity(handRight, handLeft) == 5 && frame <= f1.length - 81)
-				frame += 80;
-			else if( getIntensity(handRight, handLeft) == 4 && frame <= f1.length - 61)
-				frame += 60;
-			else if( getIntensity(handRight, handLeft) == 3 && frame <= f1.length - 41)
+			if( getIntensity(handRight, handLeft) == 5 && frame <= NUM_FLOWERS - 50)
+				frame += 50;
+			else if( getIntensity(handRight, handLeft) == 4 && frame <= NUM_FLOWERS - 40)
 				frame += 40;
-			else if(getIntensity(handRight, handLeft) == 2 && frame <= f1.length - 30)
+			else if( getIntensity(handRight, handLeft) == 3 && frame <= NUM_FLOWERS - 30)
 				frame += 30;
-			else if( getIntensity(handRight, handLeft) == 1 && frame <= f1.length - 11)
+			else if(getIntensity(handRight, handLeft) == 2 && frame <= NUM_FLOWERS - 20)
+				frame += 20;
+			else if( getIntensity(handRight, handLeft) == 1 && frame <= NUM_FLOWERS - 10)
 				frame += 10;
-			else if( getIntensity(handRight, handLeft) == -1 && frame >= 40)
-				frame -= 40;
-			else if( getIntensity(handRight, handLeft) == -2 && frame >= 60)
-				frame -= 60;
+			else if( getIntensity(handRight, handLeft) == -1 && frame >= 10)
+				frame -= 10;
+			else if( getIntensity(handRight, handLeft) == -2 && frame >= 20)
+				frame -= 20;
 
-			if(frame == f1.length-1)
+			if(frame == NUM_FLOWERS)
 				fullBloom = true;
 			else if ( frame > 0 && fullBloom){
 				if(frame == 0)
@@ -271,6 +240,7 @@ public class KinectRenderDemo extends PApplet {
 
 	}
 	
+	// return the average intensity of right and left hand
 	public int getIntensity(PVector right, PVector left){
 		if(Math.min(getIntensityHR(right), getIntensityHL(left)) == -1)
 			return (getIntensityHR(right) + getIntensityHL(left))/2 - 1;
@@ -368,13 +338,6 @@ public class KinectRenderDemo extends PApplet {
 		
 		return intensity;
 	}
-
-	public void drawIfValid(PVector vec) {
-		if(vec != null) {
-			ellipse(vec.x, vec.y, .1f,.1f);
-		}
-
-	}
 	
 	// get coordinate points between two coordinates
 	public float[][] points(PVector vec1, PVector vec2){
@@ -423,13 +386,7 @@ public class KinectRenderDemo extends PApplet {
 			// if i is even
 			if( i%2 == 0 ){
 				image(flowers.get(i)[frame], position[i][0]+.02f, position[i][1]-.02f, .18f, .18f);
-				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]-.02f, position[i][1], .18f, .18f);
-			}
-			// if i is odd
-			else{
-/*				image(flowers.get(i)[frame], position[i][0]-.02f, position[i][1], .15f, .15f);
-				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]+.02f, position[i][1]-.02f, .1f, .1f);*/
-				//System.out.println("drawLimbs: else"); //ended out prior two lines so that flower on limbs would be more sparse -- aesthetic value
+				image(flowers.get(flowers.size()-i-1)[frame], position[i][0]+.02f, position[i][1], .11f, .11f);///
 			}
 		}
 	}
